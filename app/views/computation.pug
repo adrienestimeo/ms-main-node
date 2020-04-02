@@ -1,0 +1,89 @@
+doctype html
+html(lang='en')
+    head
+        meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+        // Meta, title, CSS, favicons, etc.
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        title My Platform
+        link(href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet")
+        link(type="text/css" rel="stylesheet" href="/css/materialize.min.css"  media="screen,projection")
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+    body.grey.lighten-5
+        main.row.valign-wrapper(style='min-height: 100vh')
+            .col.s12
+                .col.s12.m10.offset-m1.xl6.offset-xl3.valign-wrapper
+                    .input-field.col.s2
+                        input#compute_a(type='text')
+                        label(for='compute_a') Value a
+                    p.col.s2 +
+                    .input-field.col.s2
+                        input#compute_b(type='text')
+                        label(for='compute_b') Value b
+                    p.col.s2 =
+                    p#result.col.s2
+                a#btn.btn.waves-effect.waves-light
+                    i.material-icons gamepad
+
+            .fixed-action-btn
+                a#menu.btn-floating.btn-large.cyan(href='/')
+                    i.large.material-icons menu
+
+
+        script(type="text/javascript" src="/js/materialize.min.js")
+        script.
+            function sendFor(url, obj, cb) {
+                const xhr = new XMLHttpRequest();
+                xhr.open('post', url, true);
+                xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+                xhr.send(JSON.stringify(obj));
+
+                xhr.onloadend = function () {
+                    if (xhr.status === 200) {
+                        console.log(xhr.response);
+                        return cb(null, JSON.parse(xhr.response));
+                    } else {
+                        return cb(new Error('Error ' + xhr.status + '. ' + xhr.response));
+                    }
+                };
+            }
+
+            function createElt(name, text, className, style, parent) {
+                const e = document.createElement(name || 'div');
+                if (text != null)
+                    e.innerHTML = text;
+                if (className != null)
+                    e.className = className;
+                if (style != null) {
+                    for (var property in style) {
+                        if (style.hasOwnProperty(property)) {
+                            e.setAttribute(property, style[property]);
+                        }
+                    }
+                }
+                if (parent != null)
+                    parent.appendChild(e);
+                return e;
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                M.FloatingActionButton.init(document.querySelectorAll('.fixed-action-btn'));
+
+                const btn = document.getElementById('btn');
+
+                btn.onclick = function() {
+                    btn.classList.add('disabled');
+                    sendFor('/computation', {
+                        a: (document.getElementById('compute_a').value || ''),
+                        b: (document.getElementById('compute_b').value || ''),
+                    }, function(err, data) {
+                        if (err) {
+                            console.error(err);
+                        } else {
+                            document.getElementById('result').innerHTML = data.result
+                        }
+                        btn.classList.remove('disabled');
+                    });
+                }
+            });

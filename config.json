@@ -1,0 +1,13 @@
+{
+  "environment": "development",
+  "hydra": {
+    "serviceName": "ms-main-node",
+    "serviceIP": "",
+    "servicePort": 9000,
+    "serviceType": "router",
+    "serviceDescription": "Main router",
+    "redis": {
+      "url": "redis://ms-redis-cache/0"
+    }
+  }
+}
