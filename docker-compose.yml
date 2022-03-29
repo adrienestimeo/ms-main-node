@@ -1,0 +1,44 @@
+version: '3.3'
+services:
+  ms-main-node:
+    build: ./ms-main-node/
+    networks:
+      - skynet
+      - internal-network
+    labels:
+      - "traefik.domain=localhost"
+      - "traefik.port=8081"
+      - "traefik.frontend.rule=Host:docker-tutorial.localhost"
+      - "traefik.backend=ms-main-node"
+    depends_on:
+    - ms-redis-cache
+  ms-number-computer:
+    build: ./ms-number-computer/
+    restart: always
+    networks:
+      - skynet
+      - internal-network
+  ms-redis-cache:
+    image: "redis:3.2.11-alpine"
+    restart: always
+    networks:
+        - internal-network
+    command: redis-server --appendonly yes
+    labels:
+        - "traefik.enable=false"
+    ports:
+        - "6379"
+  ms-reverse-proxy:
+    image: traefik:1.7.16
+    restart: always
+    networks:
+      - skynet
+    command: --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 80:80
+networks:
+  skynet:
+    driver: bridge
+  internal-network:

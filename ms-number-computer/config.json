@@ -1,0 +1,13 @@
+{  
+    "environment": "development",  
+    "hydra": {  
+        "serviceName": "ms-number-computer",  
+        "serviceIP": "",  
+        "servicePort": 9000,  
+        "serviceType": "computation",  
+        "serviceDescription": "Computation of number",  
+        "redis": {  
+            "url": "redis://ms-redis-cache/0"
+        }  
+    }  
+}
